@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.deployment.name}}
+  labels:
+    app: {{.Values.deployment.app}}
+spec:
+  replicas: {{.Values.replicaCount}}
+  selector:
+    matchLabels:
+      app: {{.Values.deployment.app}}
+  template:
+    metadata:
+      name: {{.Values.deployment.app}}
+      labels:
+        app: {{.Values.deployment.app}}
+    spec:
+      containers:
+        - name: {{.Values.deployment.app}}
+          image: {{.Values.deployment.image}}:{{.Values.deployment.tags}}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+      restartPolicy: Always
+      

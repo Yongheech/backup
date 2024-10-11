@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-fanginx-deploy
+  labels:
+    app: k8s-fanginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-fanginx
+  template:
+    metadata:
+      name: k8s-fanginx
+      labels:
+        app: k8s-fanginx
+    spec:
+      containers:
+        - name: k8s-fanginx
+          image: chkion1234/k8s-njnginx
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              name: nginx-config
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: fanginx-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-fanginx-svc
+spec:
+  selector:
+    app: k8s-fanginx
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+
+      

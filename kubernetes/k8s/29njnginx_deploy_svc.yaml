@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-njnginx-deploy
+  labels:
+    app: k8s-njnginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-njnginx
+  template:
+    metadata:
+      name: k8s-njnginx
+      labels:
+        app: k8s-njnginx
+    spec:
+      containers:
+        - name: k8s-njnginx
+          image: nginx
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/nginx/conf.d
+              name: nginx-config
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: njnginx-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-njnginx-svc
+spec:
+  selector:
+    app: k8s-njnginx
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+
+      

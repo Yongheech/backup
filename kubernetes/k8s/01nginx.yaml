@@ -1,0 +1,26 @@
+apiVersion: apps/v1    # 메니페스트 버젼
+kind: Deployment       # 메니페스트 객체 종류
+metadata:              # K8s 객체 식별 정보
+  name: nginx          # 배포 이름
+  labels:              # 리소스 식별 이름
+    app: nginx
+spec:                  # 객체 설정
+  replicas: 1          # 복제 계수
+  selector:            # 디플로이먼트가 관리할 대상
+    matchLabels:
+      app: nginx
+  template:            # 파드 생성 규칙
+    metadata:
+      name: nginx
+      labels:          # 생성할 파드의 레이블
+        app: nginx
+    spec:              # 파드 생성시 적용할 컨테이너 정보
+      containers:
+        - name: nginx
+          image: nginx  # 파드생성시 사용할 도커 이미지
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80   # 포트 지정
+              protocol: TCP
+      restartPolicy: Always
+      

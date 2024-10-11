@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb106b-deploy
+  labels:
+    app: mariadb106b
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb106b
+  template:
+    metadata:
+      name: mariadb106b
+      labels:
+        app: mariadb106b
+    spec:
+      containers:
+        - name: mariadb106b
+          image: mariadb:10.6.19-focal
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: mariadb-secret
+#          env:
+#          - name: MYSQL_ROOT_PASSWORD
+#            valueFrom:
+#              secretKeyRef:
+#                name: mariadb-secret
+#                key: MYSQL_ROOT_PASSWORD
+#          - name: MYSQL_DATABASE
+#            valueFrom:
+#              secretKeyRef:
+#                name: mariadb-secret
+#                key: MYSQL_DATABASE
+#          - name:  MYSQL_USER
+#            valueFrom:
+#              secretKeyRef:
+#                name: mariadb-secret
+#                key:  MYSQL_USER
+#          - name: MYSQL_PASSWORD
+#            valueFrom:
+#              secretKeyRef:
+#                name: mariadb-secret
+#                key: MYSQL_PASSWORD
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mariadb-storage
+      volumes:
+        - name: mariadb-storage
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb106b-svc
+spec:
+  selector:
+    app: mariadb106b
+  ports:
+    - port: 3306
+      protocol: TCP
+      targetPort: 3306
+
+      

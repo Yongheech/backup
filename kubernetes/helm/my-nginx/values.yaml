@@ -1,0 +1,17 @@
+# Default values for mynginx.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+service:
+  name: helm-mynginx-svc
+  app: helm-mynginx
+  type: ClusterIP
+  port: 80
+
+deployment:
+  name: helm-mynginx-deploy
+  app : helm-mynginx
+  image : nginx
+  tags : latest

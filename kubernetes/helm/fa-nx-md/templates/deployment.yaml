@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.deployment.mariadb.name}}
+  labels:
+    app: {{.Values.deployment.mariadb.app}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.deployment.mariadb.app}}
+  template:
+    metadata:
+      name: {{.Values.deployment.mariadb.app}}
+      labels:
+        app: {{.Values.deployment.mariadb.app}}
+    spec:
+      containers:
+        - name: {{.Values.deployment.mariadb.app}}
+          image: {{.Values.deployment.mariadb.image}}
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: {{.Values.deployment.mariadb.secret}}
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mariadb-storage
+      volumes:
+        - name: mariadb-storage
+          emptyDir: {}
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helm-fastapi-deploy
+  labels:
+    app: helm-fastapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helm-fastapi
+  template:
+    metadata:
+      name: helm-fastapi
+      labels:
+        app: helm-fastapi
+    spec:
+      containers:
+        - name: helm-fastapi
+          image: chkion1234/k8s-fastapi:v2
+          ports:
+            - containerPort: 80
+              protocol: TCP
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helm-fanginx-deploy
+  labels:
+    app: helm-fanginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helm-fanginx
+  template:
+    metadata:
+      name: helm-fanginx
+      labels:
+        app: helm-fanginx
+    spec:
+      containers:
+        - name: helm-fanginx
+          image: chkion1234/k8s-fanginx:v2
+          ports:
+            - containerPort: 80
+              protocol: TCP
+
+
+
+
+

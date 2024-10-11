@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: helm-njnginx-config
+data:
+  default.conf: |
+    server {
+      listen       80;
+      server_name  localhost;
+      location / {
+        proxy_pass http://k8s-nodejs-svc:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+      error_page   500 502 503 504  /50x.html;
+      location = /50x.html {
+        root   /usr/share/nginx/html;
+      }
+    }
+
+---
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pets-initdb-config
+data:
+  initdb.sql: |
+    CREATE TABLE images(
+                           imageid serial UNIQUE PRIMARY KEY,
+                           description character varying(10485760) NOT NULL,
+                           url character varying(255) NOT NULL );
+
+    ALTER TABLE images OWNER TO dockeruser;
+    ALTER ROLE dockeruser CONNECTION LIMIT -1;
+
+    -- add image data
+    INSERT INTO images (description, url) VALUES('vulture on tree', 'images/vulture.png');
+    INSERT INTO images (description, url) VALUES('female lions', 'images/3-female-lions.png');
+    INSERT INTO images (description, url) VALUES('antelopes', 'images/antelopes.png');
+    INSERT INTO images (description, url) VALUES('birds', 'images/birds.png');
+    INSERT INTO images (description, url) VALUES('buffalo', 'images/buffalo.png');
+    INSERT INTO images (description, url) VALUES('cheetah', 'images/cheetah.png');
+    INSERT INTO images (description, url) VALUES('elephants', 'images/elephants.png');
+    INSERT INTO images (description, url) VALUES('jackal', 'images/jackal.png');
+    INSERT INTO images (description, url) VALUES('giraffe', 'images/giraffe.png');
+    INSERT INTO images (description, url) VALUES('hippos', 'images/hippos.png');
+    INSERT INTO images (description, url) VALUES('male lion', 'images/male-lion.png');
+    INSERT INTO images (description, url) VALUES('zebra', 'images/zebra.png');
+    ALTER ROLE dockeruser CONNECTION LIMIT -1;
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgre-pets-secret
+type: Opaque
+data:
+  POSTGRES_USER: ZG9ja2VydXNlcg==
+  POSTGRES_PASSWORD : YWJjMTIzIQ==
+  POSTGRES_DB : cGV0cw==

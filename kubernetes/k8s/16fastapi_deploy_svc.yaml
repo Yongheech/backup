@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8sfastapi-deploy
+  labels:
+    app: k8s-fastapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-fastapi
+  template:
+    metadata:
+      name: k8s-fastapi
+      labels:
+        app: k8s-fastapi
+    spec:
+      containers:
+        - name: k8s-fastapi
+          image: chkion1234/k8s-fastapi
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-fastapi-svc
+spec:
+  selector:
+    app: k8s-fastapi
+  ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000

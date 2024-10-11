@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb106-deploy
+  labels:
+    app: mariadb106
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb106
+  template:
+    metadata:
+      name: mariadb106
+      labels:
+        app: mariadb106
+    spec:
+      containers:
+        - name: mariadb106
+          image: mariadb:10.6.19-focal
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: mariadb-config
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: mariadb-storage
+      volumes:
+        - name: mariadb-storage
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb106-svc
+spec:
+  selector:
+    app: mariadb106
+  ports:
+    - port: 3306
+      protocol: TCP
+      targetPort: 3306
+
+      

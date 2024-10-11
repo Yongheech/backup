@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8snginx-deploy
+  labels:
+    app: k8s-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-nginx
+  template:
+    metadata:
+      name: k8s-nginx
+      labels:
+        app: k8s-nginx
+    spec:
+      containers:
+        - name: k8s-nginx
+          image: chkion1234/k8s-njnginx
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-nginx-svc
+spec:
+  selector:
+    app: k8s-nginx
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+
+      

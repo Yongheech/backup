@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pvpvc
+  labels:
+    app: nginx
+spec:
+  volumes:
+    - name: nginx-data
+      persistentVolumeClaim:
+        claimName: nginx-pvc
+  containers:
+    - name: nginx
+      image: nginx
+      command: ["bash","-c",
+                "while true; do echo 'Hello, World!!' >> /nginx_data/hello.txt; sleep 3; done"]
+      ports:
+        - name: nginx
+          containerPort: 80
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /nginx_data
+          name: nginx-data

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: helm-njnginx-svc
+spec:
+  selector:
+    app: helm-njnginx
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helm-nodejs-svc
+spec:
+  selector:
+    app: helm-nodejs
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helm-postgre-svc
+spec:
+  selector:
+    app: helm-postgre13
+  ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432

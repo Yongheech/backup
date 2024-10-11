@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgre13-deploy
+  labels:
+    app: postgre13
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgre13
+  template:
+    metadata:
+      name: postgre13
+      labels:
+        app: postgre13
+    spec:
+      containers:
+        - name: postgre13
+          image: postgres:13-alpine3.20
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: postgre-pets-secret
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgre-storage
+            - mountPath: /docker-entrypoint-initdb.d
+              name: initdb-script
+      volumes:
+        - name: postgre-storage
+          emptyDir: {}
+        - name: initdb-script
+          configMap:
+            name: pets-initdb-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-postgre-svc
+spec:
+  selector:
+    app: postgre13
+  ports:
+    - port: 5432
+      protocol: TCP
+      targetPort: 5432
+
+      

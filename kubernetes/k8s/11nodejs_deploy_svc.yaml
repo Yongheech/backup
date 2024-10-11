@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8snodejs-deploy
+  labels:
+    app: k8s-nodejs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-nodejs
+  template:
+    metadata:
+      name: k8s-nodejs
+      labels:
+        app: k8s-nodejs
+    spec:
+      containers:
+        - name: k8s-nodejs
+          image: chkion1234/k8s-nodejs
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-nodejs-svc
+spec:
+  selector:
+    app: k8s-nodejs
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
